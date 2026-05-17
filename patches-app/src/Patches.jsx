@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, useInView, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import {
-  Puzzle, Zap, Store, EyeOff, BrainCircuit, ChevronRight,
-  Play, Check, ArrowRight, Sparkles, Globe, Star, TrendingUp,
-  Code2, Layers, MousePointerClick
+  Check, Play, Store, EyeOff, BrainCircuit,
+  LayoutTemplate, Apple, Star
 } from "lucide-react";
+import logo from "./assets/patcheslogorounded-removebg-preview.png";
 
 /* ─── Shared animation variants ─────────────────────────────────── */
-const fadeUp = { hidden: { opacity: 0, y: 32 }, show: { opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] } } };
-const stagger = { show: { transition: { staggerChildren: 0.11 } } };
+const fadeUp = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } } };
+const stagger = { show: { transition: { staggerChildren: 0.1 } } };
 
 function useInViewOnce(threshold = 0.15) {
   const ref = useRef(null);
@@ -16,28 +16,29 @@ function useInViewOnce(threshold = 0.15) {
   return [ref, inView];
 }
 
-/* ─── Gradient text helper ───────────────────────────────────────── */
-function GradientText({ children, className = "" }) {
+/* ─── Icons ──────────────────────────────────────────────────────── */
+function WindowsIcon({ className }) {
   return (
-    <span className={`bg-gradient-to-r from-[#3B82F6] via-[#8B5CF6] to-[#EC4899] bg-clip-text text-transparent ${className}`}>
-      {children}
-    </span>
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.949-1.801z" />
+    </svg>
   );
 }
 
-/* ─── Glassmorphic card ──────────────────────────────────────────── */
-function GlassCard({ children, className = "", hover = true }) {
+function GithubIcon({ className }) {
   return (
-    <div className={`relative rounded-2xl border border-white/[0.07] bg-white/[0.04] backdrop-blur-xl ${hover ? "hover:border-white/[0.14] hover:bg-white/[0.07] transition-all duration-300" : ""} ${className}`}>
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/[0.04] to-transparent pointer-events-none" />
-      {children}
-    </div>
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+    </svg>
   );
 }
 
-/* ─── Glow blob ──────────────────────────────────────────────────── */
-function GlowBlob({ className = "" }) {
-  return <div className={`absolute rounded-full blur-[120px] opacity-25 pointer-events-none ${className}`} />;
+function LinkedInIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+    </svg>
+  );
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -48,77 +49,38 @@ function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const links = ["Marketplace", "Pricing", "Community"];
+  const links = ["Products", "Pricing", "Docs"];
 
   return (
-    <motion.nav
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? "py-3" : "py-5"}`}
-    >
-      <div className={`mx-auto max-w-6xl px-5 transition-all duration-500 ${scrolled ? "rounded-2xl border border-white/[0.08] bg-[#050505]/80 backdrop-blur-2xl shadow-2xl shadow-black/60" : ""}`}>
-        <div className="flex items-center justify-between h-12">
-          {/* Logo */}
-          <a href="#" className="flex items-center gap-2.5 group">
-            <div className="relative w-8 h-8 rounded-lg bg-gradient-to-br from-[#3B82F6] to-[#8B5CF6] flex items-center justify-center shadow-lg shadow-blue-500/30">
-              <Puzzle className="w-4 h-4 text-white" strokeWidth={2.5} />
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/20 to-transparent" />
-            </div>
-            <span className="font-semibold text-white text-[17px] tracking-tight">Patches</span>
+    <nav className="fixed top-0 left-0 right-0 z-50 pt-5 px-4 transition-all duration-300">
+      <div className={`mx-auto max-w-4xl bg-[#0F142D]/80 backdrop-blur-md border border-white/10 rounded-full px-5 h-[52px] flex items-center justify-between shadow-lg transition-all duration-300 ${scrolled ? "bg-[#0A0D20]/90 shadow-2xl border-white/20" : ""}`}>
+        <div className="flex items-center gap-6">
+          <a href="#" className="flex items-center text-white font-medium pl-2">
+            <img src={logo} alt="Patches Logo" className="w-7 h-7 mr-2 rounded-full shadow-sm bg-white/10" />
+            <span className="font-serif text-[20px] font-semibold tracking-tight">Patches</span>
           </a>
 
-          {/* Desktop links */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden md:flex items-center gap-5">
             {links.map((l) => (
-              <a key={l} href={`#${l.toLowerCase()}`} className="px-4 py-2 text-sm text-white/55 hover:text-white/90 transition-colors duration-200 rounded-lg hover:bg-white/[0.05]">
+              <a key={l} href={`#${l.toLowerCase()}`} className="text-[13px] font-medium text-slate-300 hover:text-white transition-colors">
                 {l}
               </a>
             ))}
           </div>
-
-          {/* CTA */}
-          <div className="flex items-center gap-3">
-            <motion.a
-              href="#"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.97 }}
-              className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-white text-sm font-semibold shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-shadow"
-            >
-              <span>Get Extension</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </motion.a>
-            {/* mobile hamburger */}
-            <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden p-2 rounded-lg border border-white/[0.08] text-white/60 hover:text-white">
-              <div className="space-y-1.5">
-                <span className={`block h-px w-5 bg-current transition-all ${mobileOpen ? "rotate-45 translate-y-2" : ""}`} />
-                <span className={`block h-px w-5 bg-current transition-all ${mobileOpen ? "opacity-0" : ""}`} />
-                <span className={`block h-px w-5 bg-current transition-all ${mobileOpen ? "-rotate-45 -translate-y-2" : ""}`} />
-              </div>
-            </button>
-          </div>
         </div>
 
-        {/* Mobile menu */}
-        <AnimatePresence>
-          {mobileOpen && (
-            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="md:hidden overflow-hidden border-t border-white/[0.06] mt-2">
-              <div className="flex flex-col gap-1 py-3">
-                {links.map((l) => (
-                  <a key={l} href={`#${l.toLowerCase()}`} className="px-4 py-2.5 text-sm text-white/60 hover:text-white rounded-lg hover:bg-white/[0.05]">{l}</a>
-                ))}
-                <a href="#" className="mx-2 mt-2 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-white text-sm font-semibold">Get Extension</a>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <div className="flex items-center">
+          <a href="#" className="text-[13px] font-medium border border-white/20 rounded-full px-5 py-1.5 hover:bg-white/10 transition-colors text-white">
+            Log in
+          </a>
+        </div>
       </div>
-    </motion.nav>
+    </nav>
   );
 }
 
@@ -127,73 +89,36 @@ function Navbar() {
 ═══════════════════════════════════════════════════════════════════ */
 function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-16">
-      {/* Background glows */}
-      <GlowBlob className="w-[600px] h-[600px] bg-[#3B82F6] -top-32 -left-40" />
-      <GlowBlob className="w-[500px] h-[500px] bg-[#8B5CF6] top-20 -right-32" />
-      <GlowBlob className="w-[400px] h-[400px] bg-[#EC4899] bottom-0 left-1/2 -translate-x-1/2" />
+    <section className="relative pt-44 pb-24 px-5 flex flex-col items-center justify-center text-center overflow-hidden bg-[#060918]">
+      {/* Dark mode glow effects */}
+      <div className="absolute inset-0 flex justify-center opacity-[0.6] pointer-events-none">
+        <div className="w-[800px] h-[400px] bg-gradient-to-b from-[#141a4e] to-transparent blur-[120px] rounded-full translate-y-[-30%]" />
+      </div>
+      <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-indigo-900/20 blur-[100px] rounded-full pointer-events-none" />
 
-      {/* Dot grid */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_40%,_#050505_100%)] pointer-events-none" />
-      <div className="absolute inset-0 opacity-20 pointer-events-none"
-        style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-
-      <div className="relative z-10 max-w-5xl mx-auto px-5 text-center">
+      <div className="relative z-10 max-w-3xl mx-auto">
         <motion.div initial="hidden" animate="show" variants={stagger}>
-          {/* Badge */}
-          <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-400 text-xs font-semibold tracking-widest uppercase mb-8">
-            <Sparkles className="w-3 h-3" />
-            <span>AI-Powered Browser Extension</span>
-            <Sparkles className="w-3 h-3" />
-          </motion.div>
-
-          {/* Headline */}
-          <motion.h1 variants={fadeUp} className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[0.93] mb-7">
-            <span className="text-white">The Internet,</span>
-            <br />
-            <GradientText>tailored to your</GradientText>
-            <br />
-            <span className="text-white">workflow.</span>
+          <motion.h1 variants={fadeUp} className="text-5xl md:text-7xl font-serif text-white tracking-tight leading-[1.1] mb-6">
+            Effortless browser <br /> customization by Patches
           </motion.h1>
 
-          {/* Sub */}
-          <motion.p variants={fadeUp} className="text-lg md:text-xl text-white/45 max-w-2xl mx-auto leading-relaxed mb-12">
-            Transform any website instantly. Prompt your browser to strip distractions, highlight what matters, and build your own digital workspace.
+          <motion.p variants={fadeUp} className="text-slate-400 text-[17px] max-w-xl mx-auto mb-10 leading-relaxed">
+            Streamline your browsing process with seamless automation for every custom website, tailored by Patches.
           </motion.p>
 
-          {/* CTAs */}
           <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <motion.a href="#" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-              className="group flex items-center gap-3 px-7 py-4 rounded-2xl bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-white font-bold text-base shadow-2xl shadow-blue-500/30 hover:shadow-blue-500/50 transition-all">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" /></svg>
-              Add to Chrome — It's Free
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </motion.a>
-
-            <motion.a href="#demo" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-              className="flex items-center gap-3 px-7 py-4 rounded-2xl border border-white/[0.1] bg-white/[0.04] text-white/80 font-semibold text-base backdrop-blur-sm hover:bg-white/[0.08] transition-all">
-              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                <Play className="w-3.5 h-3.5 ml-0.5 fill-white text-white" />
-              </div>
-              Watch Demo
-            </motion.a>
-          </motion.div>
-
-          {/* Social proof */}
-          <motion.div variants={fadeUp} className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-6 text-white/35 text-sm">
-            <div className="flex -space-x-2">
-              {["#3B82F6","#8B5CF6","#EC4899","#10B981","#F59E0B"].map((c, i) => (
-                <div key={i} className="w-8 h-8 rounded-full border-2 border-[#050505] flex items-center justify-center text-xs font-bold text-white" style={{ backgroundColor: c }}>
-                  {String.fromCharCode(65 + i)}
-                </div>
-              ))}
-            </div>
-            <span><strong className="text-white/70">12,000+</strong> active patchers</span>
-            <span className="hidden sm:block">·</span>
-            <div className="flex items-center gap-1">
-              {[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />)}
-              <span className="ml-1"><strong className="text-white/70">4.9</strong> / 5 on Chrome Store</span>
-            </div>
+            <a href="https://github.com/EpicCoder16/Patches" target="_blank">
+              <button className="flex items-center justify-center gap-2 bg-[#38BDF8] text-[#060918] px-7 py-3.5 rounded-full font-bold text-[15px] hover:bg-[#7dd3fc] transition-colors shadow-lg shadow-[#38BDF8]/20 w-full sm:w-auto">
+                <Apple className="w-[18px] h-[18px] mb-[2px]" />
+                Download for Mac
+              </button>
+            </a>
+            <a href="https://github.com/EpicCoder16/Patches" target="_blank">
+              <button className="flex items-center justify-center gap-2 bg-white/10 text-white border border-white/20 px-7 py-3.5 rounded-full font-medium text-[15px] hover:bg-white/20 transition-colors shadow-sm w-full sm:w-auto backdrop-blur-sm">
+                <WindowsIcon className="w-[16px] h-[16px]" />
+                Download for Windows
+              </button>
+            </a>
           </motion.div>
         </motion.div>
       </div>
@@ -208,133 +133,24 @@ function DemoVideo() {
   const [ref, inView] = useInViewOnce();
 
   return (
-    <section id="demo" className="relative py-24 overflow-hidden">
-      <GlowBlob className="w-[800px] h-[400px] bg-[#3B82F6] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-
-      <div className="relative z-10 max-w-5xl mx-auto px-5">
-        <motion.div ref={ref} initial="hidden" animate={inView ? "show" : "hidden"} variants={stagger}>
-          <motion.div variants={fadeUp} className="text-center mb-10">
-            <p className="text-sm font-semibold tracking-widest uppercase text-blue-400 mb-3">See It In Action</p>
-            <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">One prompt. Infinite patches.</h2>
-          </motion.div>
-
-          <motion.div variants={fadeUp}>
-            {/* Glow ring */}
-            <div className="relative group">
-              <div className="absolute -inset-[2px] rounded-3xl bg-gradient-to-r from-[#3B82F6] via-[#8B5CF6] to-[#EC4899] opacity-70 blur-sm group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="absolute -inset-[2px] rounded-3xl bg-gradient-to-r from-[#3B82F6] via-[#8B5CF6] to-[#EC4899] opacity-30" />
-
-              <div className="relative rounded-3xl overflow-hidden bg-[#0a0a0f] border border-white/[0.08]">
-                {/* Browser chrome */}
-                <div className="flex items-center gap-2 px-5 py-3.5 border-b border-white/[0.06] bg-white/[0.02]">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-red-500/70" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
-                    <div className="w-3 h-3 rounded-full bg-green-500/70" />
-                  </div>
-                  <div className="flex-1 mx-4 px-4 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.06] text-white/30 text-xs text-center">
-                    youtube.com
-                  </div>
-                  <Puzzle className="w-4 h-4 text-blue-400" />
-                </div>
-
-                {/* Video placeholder */}
-                <div className="relative bg-gradient-to-br from-[#0d0d1a] to-[#050505] flex items-center justify-center" style={{ height: "600px" }}>
-                  <div className="absolute inset-0 opacity-10"
-                    style={{ backgroundImage: "linear-gradient(rgba(59,130,246,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.3) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
-
-                  {/* Drop your video here */}
-                  <video className="w-full h-full object-cover" autoPlay muted loop playsInline>
-                    <source src="/patchesvidforlandingpage.mp4" type="video/mp4" />
-                  </video>
-
-                  
-
-                  
-                </div>
+    <section id="demo" className="relative pb-24 px-5 bg-[#060918]">
+      <div className="max-w-[1000px] mx-auto">
+        <motion.div ref={ref} initial="hidden" animate={inView ? "show" : "hidden"} variants={fadeUp}>
+          <div className="rounded-2xl overflow-hidden shadow-2xl shadow-black/50 bg-[#0F142D] transform -rotate-1 scale-100 mx-4 sm:mx-10 border border-white/10">
+            {/* Browser Chrome Header */}
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10 bg-[#0A0D20]">
+              <div className="flex gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-slate-600" />
+                <div className="w-2.5 h-2.5 rounded-full bg-slate-600" />
+                <div className="w-2.5 h-2.5 rounded-full bg-slate-600" />
               </div>
             </div>
-          </motion.div>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   BENTO FEATURE GRID
-═══════════════════════════════════════════════════════════════════ */
-const features = [
-  {
-    icon: MousePointerClick, color: "from-[#3B82F6] to-[#6366F1]", glow: "blue",
-    label: "Prompt-to-Edit",
-    desc: 'Type "make this sidebar purple" and watch it happen in real time. Natural language CSS/JS injection.',
-    demo: (
-      <div className="mt-4 rounded-xl bg-black/40 border border-white/[0.06] p-3 font-mono text-xs">
-        <span className="text-white/30">{">"} </span>
-        <span className="text-blue-400">make this sidebar dark and minimal</span>
-        <motion.span animate={{ opacity: [1, 0] }} transition={{ repeat: Infinity, duration: 0.7 }} className="text-blue-400">|</motion.span>
-        <div className="mt-2 text-green-400/70">✓ Applied 3 patches to sidebar</div>
-      </div>
-    ),
-    wide: true,
-  },
-  {
-    icon: Store, color: "from-[#8B5CF6] to-[#EC4899]", glow: "purple",
-    label: "Patch Marketplace",
-    desc: "Download community-made skins for Canvas, Reddit, Jira, and more.",
-    wide: false,
-  },
-  {
-    icon: EyeOff, color: "from-[#10B981] to-[#3B82F6]", glow: "emerald",
-    label: "Smart Clutter Removal",
-    desc: "One-click focus mode. Strip ads, banners, sidebars, and noise instantly.",
-    wide: false,
-  },
-  {
-    icon: BrainCircuit, color: "from-[#EC4899] to-[#F59E0B]", glow: "pink",
-    label: "AI Data Extraction",
-    desc: "Summarize page deals or assignments into a floating smart dashboard. No copy-paste needed.",
-    demo: (
-      <div className="mt-4 rounded-xl bg-black/40 border border-white/[0.06] p-3 text-xs space-y-1.5">
-        <div className="flex items-center gap-2 text-white/60"><span className="text-yellow-400">📋</span> Due: Nov 15 – HW3</div>
-        <div className="flex items-center gap-2 text-white/60"><span className="text-pink-400">⚡</span> 3 missing assignments</div>
-        <div className="flex items-center gap-2 text-white/60"><span className="text-green-400">✓</span> Quiz on Wednesday</div>
-      </div>
-    ),
-    wide: true,
-  },
-];
-
-function FeatureGrid() {
-  const [ref, inView] = useInViewOnce();
-
-  return (
-    <section className="relative py-24 overflow-hidden">
-      <GlowBlob className="w-[500px] h-[500px] bg-[#8B5CF6] top-0 right-0" />
-
-      <div className="relative z-10 max-w-6xl mx-auto px-5">
-        <motion.div ref={ref} initial="hidden" animate={inView ? "show" : "hidden"} variants={stagger}>
-          <motion.div variants={fadeUp} className="text-center mb-14">
-            <p className="text-sm font-semibold tracking-widest uppercase text-purple-400 mb-3">Features</p>
-            <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">
-              Your browser.<br /><GradientText>Supercharged.</GradientText>
-            </h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {features.map((f, i) => (
-              <motion.div key={i} variants={fadeUp} className={f.wide ? "md:col-span-2" : "md:col-span-1"}>
-                <GlassCard className="p-6 h-full group cursor-default">
-                  <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${f.color} flex items-center justify-center mb-4 shadow-lg`}>
-                    <f.icon className="w-5 h-5 text-white" />
-                  </div>
-                  <h3 className="text-lg font-bold text-white mb-2">{f.label}</h3>
-                  <p className="text-white/45 text-sm leading-relaxed">{f.desc}</p>
-                  {f.demo}
-                </GlassCard>
-              </motion.div>
-            ))}
+            {/* Video */}
+            <div className="relative bg-[#060918] w-full aspect-[16/9] flex items-center justify-center">
+              <video className="w-full h-full object-cover" autoPlay muted loop playsInline>
+                <source src="/patchesvidforlandingpage.mp4" type="video/mp4" />
+              </video>
+            </div>
           </div>
         </motion.div>
       </div>
@@ -343,73 +159,126 @@ function FeatureGrid() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   MARKETPLACE PREVIEW
+   FEATURE GRID
 ═══════════════════════════════════════════════════════════════════ */
-const patches = [
-  { name: "Dark Mode Canvas", author: "@studyhacks", stars: 4820, tag: "Education", color: "from-[#3B82F6] to-[#1d4ed8]" },
-  { name: "Clean LinkedIn", author: "@productivist", stars: 3910, tag: "Social", color: "from-[#0ea5e9] to-[#3B82F6]" },
-  { name: "Minimalist Gmail", author: "@flowstate", stars: 6102, tag: "Productivity", color: "from-[#EC4899] to-[#8B5CF6]" },
-  { name: "Reddit Focus Mode", author: "@nodistractions", stars: 2870, tag: "Social", color: "from-[#F59E0B] to-[#EC4899]" },
-  { name: "Notion Palette+", author: "@designhub", stars: 1940, tag: "Tools", color: "from-[#10B981] to-[#3B82F6]" },
-  { name: "Jira Dark Pro", author: "@devhints", stars: 3340, tag: "DevTools", color: "from-[#8B5CF6] to-[#EC4899]" },
+const features = [
+  {
+    icon: LayoutTemplate,
+    label: "Prompt-to-Edit",
+    desc: "Type what you want to change and watch it happen in real time. Natural language style injection.",
+    comingSoon: false,
+    content: (
+      <div className="flex flex-col gap-2 w-full max-w-[240px]">
+        <div className="bg-[#1e293b] rounded-lg p-3 text-[11px] text-slate-300 font-mono shadow-inner border border-slate-700">
+          <span className="text-emerald-400">{">"}</span> make sidebar purple
+        </div>
+        <div className="flex justify-end">
+          <div className="bg-[#38BDF8] text-[#060918] font-medium rounded-lg p-2.5 text-[11px] shadow-lg shadow-[#38BDF8]/20 flex items-center gap-1.5">
+            <Check className="w-3.5 h-3.5" /> Sidebar updated
+          </div>
+        </div>
+      </div>
+    )
+  },
+  {
+    icon: Store,
+    label: "Patch Marketplace",
+    desc: "Download community-made skins for Canvas, Reddit, Jira, and more seamlessly.",
+    comingSoon: true,
+    content: (
+      <div className="grid grid-cols-2 gap-3 w-full max-w-[220px]">
+        <div className="h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg shadow-sm border border-white/10 flex items-center justify-center"><LayoutTemplate className="w-5 h-5 text-white/50" /></div>
+        <div className="h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg shadow-sm border border-white/10 flex items-center justify-center"><Check className="w-5 h-5 text-white/50" /></div>
+        <div className="h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg shadow-sm border border-white/10 flex items-center justify-center"><Star className="w-5 h-5 text-white/50" /></div>
+        <div className="h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg shadow-sm border border-white/10 flex items-center justify-center"><Store className="w-5 h-5 text-white/50" /></div>
+      </div>
+    )
+  },
+  {
+    icon: EyeOff,
+    label: "Smart Clutter Removal",
+    desc: "One-click focus mode. Strip ads, banners, sidebars, and noise instantly to stay focused.",
+    comingSoon: false,
+    content: (
+      <div className="w-full max-w-[240px] bg-[#1e293b] rounded-lg border border-slate-700 overflow-hidden shadow-xl">
+        <div className="h-5 bg-slate-800 border-b border-slate-700 flex items-center px-2 gap-1.5">
+          <div className="w-1.5 h-1.5 rounded-full bg-slate-600" />
+          <div className="w-1.5 h-1.5 rounded-full bg-slate-600" />
+          <div className="w-1.5 h-1.5 rounded-full bg-slate-600" />
+        </div>
+        <div className="p-3 flex gap-3">
+          <div className="w-1/3 aspect-square bg-slate-800 rounded border border-red-500/30 flex items-center justify-center relative overflow-hidden group-hover:border-red-500/50 transition-colors">
+            <div className="absolute inset-0 bg-red-500/10 flex items-center justify-center"><EyeOff className="w-5 h-5 text-red-400 opacity-50 group-hover:opacity-100 transition-opacity" /></div>
+          </div>
+          <div className="w-2/3 space-y-2 flex flex-col justify-center">
+            <div className="h-2 w-full bg-slate-600 rounded" />
+            <div className="h-2 w-4/5 bg-slate-600 rounded" />
+            <div className="h-2 w-full bg-slate-600 rounded" />
+          </div>
+        </div>
+      </div>
+    )
+  },
+  {
+    icon: BrainCircuit,
+    label: "AI Data Extraction",
+    desc: "Summarize page deals or assignments into a floating smart dashboard easily.",
+    comingSoon: true,
+    content: (
+      <div className="w-full max-w-[200px] bg-[#0A0D20] rounded-xl border border-indigo-500/30 p-4 shadow-2xl shadow-indigo-500/10 transform rotate-3 hover:rotate-0 transition-transform">
+        <div className="flex items-center gap-2 mb-3">
+          <BrainCircuit className="w-4 h-4 text-indigo-400" />
+          <div className="h-2 w-16 bg-slate-600 rounded" />
+        </div>
+        <div className="space-y-3">
+          <div className="flex justify-between items-center bg-white/5 p-1.5 rounded">
+            <div className="h-1.5 w-12 bg-slate-500 rounded" />
+            <div className="h-1.5 w-8 bg-indigo-400 rounded" />
+          </div>
+          <div className="flex justify-between items-center bg-white/5 p-1.5 rounded">
+            <div className="h-1.5 w-16 bg-slate-500 rounded" />
+            <div className="h-1.5 w-6 bg-indigo-400 rounded" />
+          </div>
+        </div>
+      </div>
+    )
+  }
 ];
 
-function MarketplacePreview() {
+function FeatureGrid() {
   const [ref, inView] = useInViewOnce();
-  const scrollRef = useRef(null);
 
   return (
-    <section id="marketplace" className="relative py-24 overflow-hidden">
-      <GlowBlob className="w-[600px] h-[300px] bg-[#3B82F6] bottom-0 left-0" />
+    <section className="py-24 bg-[#060918] border-t border-white/5 px-5">
+      <div className="max-w-5xl mx-auto text-center mb-16">
+        <h2 className="text-4xl md:text-5xl font-serif text-white mb-5 tracking-tight">Built for absolute clarity <br /> and focused work</h2>
+        <p className="text-slate-400 text-[17px] max-w-lg mx-auto leading-relaxed">Stay focused with tools that organize, connect and turn information into confident decisions.</p>
+      </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-5">
-        <motion.div ref={ref} initial="hidden" animate={inView ? "show" : "hidden"} variants={stagger}>
-          <motion.div variants={fadeUp} className="flex items-end justify-between mb-10">
-            <div>
-              <p className="text-sm font-semibold tracking-widest uppercase text-blue-400 mb-3">Marketplace</p>
-              <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">
-                Trending <GradientText>Patches</GradientText>
-              </h2>
+      <div className="max-w-[1000px] mx-auto border-t border-l border-white/10 grid grid-cols-1 md:grid-cols-2">
+        {features.map((f, i) => (
+          <div key={i} className="p-10 lg:p-12 bg-[#0A0D20] border-b border-r border-white/10 flex flex-col justify-between group hover:bg-[#0c102a] transition-colors">
+            <div className="mb-10">
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <h3 className="text-xl font-bold text-white">{f.label}</h3>
+                {f.comingSoon && <span className="text-[10px] uppercase tracking-wider font-bold bg-[#141a4e] border border-indigo-500/30 text-indigo-200 px-2.5 py-0.5 rounded-full">Coming Soon!</span>}
+              </div>
+              <p className="text-slate-400 text-[15px] leading-relaxed">{f.desc}</p>
             </div>
-            <a href="#" className="hidden md:flex items-center gap-1.5 text-white/40 hover:text-white/80 text-sm transition-colors">
-              Browse all <ChevronRight className="w-4 h-4" />
-            </a>
-          </motion.div>
 
-          <motion.div variants={fadeUp}>
-            <div ref={scrollRef} className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide" style={{ scrollbarWidth: "none" }}>
-              {patches.map((p, i) => (
-                <motion.div key={i} whileHover={{ y: -4, scale: 1.01 }} className="flex-shrink-0 w-64">
-                  <GlassCard className="overflow-hidden">
-                    {/* Color band */}
-                    <div className={`h-24 bg-gradient-to-br ${p.color} relative overflow-hidden`}>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <Globe className="w-10 h-10 text-white/20" />
-                      </div>
-                      <div className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-black/30 text-white/80 text-[10px] font-semibold backdrop-blur-sm">
-                        {p.tag}
-                      </div>
-                    </div>
-                    <div className="p-4">
-                      <h4 className="text-white font-bold text-sm mb-0.5">{p.name}</h4>
-                      <p className="text-white/35 text-xs mb-3">{p.author}</p>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1 text-yellow-400/80 text-xs">
-                          <Star className="w-3 h-3 fill-current" />
-                          <span>{(p.stars / 1000).toFixed(1)}k</span>
-                        </div>
-                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                          className="px-3 py-1.5 rounded-lg bg-white/[0.07] border border-white/[0.08] text-white/60 text-xs hover:bg-white/[0.12] hover:text-white transition-all">
-                          Install
-                        </motion.button>
-                      </div>
-                    </div>
-                  </GlassCard>
-                </motion.div>
-              ))}
+            <div className="h-[220px] w-full bg-[#060918] rounded-xl flex items-center justify-center border border-white/5 overflow-hidden relative shadow-inner">
+              <div className="absolute inset-0 bg-gradient-to-br from-transparent to-[#141a4e]/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+              {/* Background large subtle icon */}
+              <f.icon className="absolute -right-4 -bottom-4 w-32 h-32 text-white/[0.02] group-hover:text-indigo-500/[0.05] transition-colors duration-500 transform group-hover:scale-110" strokeWidth={1} />
+
+              {/* Foreground Content Mockups */}
+              <div className="relative z-10 w-full h-full flex items-center justify-center p-6">
+                {f.content}
+              </div>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        ))}
       </div>
     </section>
   );
@@ -420,164 +289,134 @@ function MarketplacePreview() {
 ═══════════════════════════════════════════════════════════════════ */
 const plans = [
   {
-    name: "Free",
+    name: "Starter",
     price: "$0",
-    sub: "forever",
-    desc: "Perfect for getting started and exploring what Patches can do.",
-    features: [
-      "25 AI prompts / month",
-      "Access to public Marketplace",
-      "Basic clutter removal",
-      "Community support",
-      "3 saved patches",
-    ],
-    cta: "Add to Chrome",
-    highlight: false,
+    desc: "Perfect for individuals and small teams getting started.",
+    features: ["Up to 3 projects", "Basic documentation tools", "Community support"],
+    cta: "Start for free",
+    dark: false,
   },
   {
-    name: "Pro",
-    price: "$5",
-    sub: "per month",
-    desc: "For power users who want unlimited customization and creator access.",
-    features: [
-      "Unlimited AI prompts",
-      "Publish to Marketplace",
-      "Priority AI processing",
-      "Advanced data extraction",
-      "Unlimited saved patches",
-      "Early access to beta features",
-    ],
-    cta: "Start Pro Free",
-    highlight: true,
+    name: "Professional",
+    price: "$9",
+    desc: "Advanced features for growing teams and businesses.",
+    features: ["Unlimited projects", "Advanced documentation tools", "Priority support"],
+    cta: "Coming Soon!",
+    dark: true,
   },
+  {
+    name: "Enterprise",
+    price: "TBD",
+    desc: "Complete solution for large organizations and enterprises.",
+    features: ["Everything in Professional", "Dedicated account manager", "24/7 phone support"],
+    cta: "Coming Soon!",
+    dark: false,
+  }
 ];
 
 function Pricing() {
-  const [ref, inView] = useInViewOnce();
+  const [isAnnual, setIsAnnual] = useState(true);
 
   return (
-    <section id="pricing" className="relative py-24 overflow-hidden">
-      <GlowBlob className="w-[600px] h-[600px] bg-[#8B5CF6] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+    <section id="pricing" className="py-24 bg-[#060918] border-t border-white/5 px-5">
+      <div className="max-w-5xl mx-auto text-center mb-14">
+        <h2 className="text-4xl md:text-5xl font-serif text-white mb-5 tracking-tight">Choose the perfect plan <br /> for your business</h2>
+        <p className="text-slate-400 text-[17px] max-w-lg mx-auto mb-10 leading-relaxed">Scale your operations with flexible pricing that grows with your team. Start free, upgrade when you're ready.</p>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-5">
-        <motion.div ref={ref} initial="hidden" animate={inView ? "show" : "hidden"} variants={stagger}>
-          <motion.div variants={fadeUp} className="text-center mb-14">
-            <p className="text-sm font-semibold tracking-widest uppercase text-purple-400 mb-3">Pricing</p>
-            <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">
-              Simple, honest <GradientText>pricing.</GradientText>
-            </h2>
-          </motion.div>
+        {/* Toggle */}
+        <div className="inline-flex items-center p-1 bg-[#0F142D] border border-white/10 rounded-full shadow-inner">
+          <button onClick={() => setIsAnnual(true)} className={`px-6 py-2 rounded-full text-[14px] font-medium transition-colors ${isAnnual ? 'bg-[#141a4e] text-white shadow-sm border border-indigo-500/30' : 'text-slate-400 hover:text-white'}`}>Annually</button>
+          <button onClick={() => setIsAnnual(false)} className={`px-6 py-2 rounded-full text-[14px] font-medium transition-colors ${!isAnnual ? 'bg-[#141a4e] text-white shadow-sm border border-indigo-500/30' : 'text-slate-400 hover:text-white'}`}>Monthly</button>
+        </div>
+      </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-            {plans.map((plan, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                <div className="relative">
-                  {plan.highlight && (
-                    <>
-                      <div className="absolute -inset-[1.5px] rounded-2xl bg-gradient-to-r from-[#3B82F6] via-[#8B5CF6] to-[#EC4899] opacity-80" />
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-white text-xs font-bold shadow-lg">
-                        Most Popular
-                      </div>
-                    </>
-                  )}
-                  <GlassCard hover={false} className={`relative p-7 ${plan.highlight ? "bg-white/[0.07]" : ""}`}>
-                    <div className="flex items-baseline gap-1.5 mb-1">
-                      <span className="text-4xl font-black text-white">{plan.price}</span>
-                      <span className="text-white/35 text-sm">/ {plan.sub}</span>
-                    </div>
-                    <h3 className={`text-xl font-black mb-2 ${plan.highlight ? "" : "text-white"}`}>
-                      {plan.highlight ? <GradientText>{plan.name}</GradientText> : plan.name}
-                    </h3>
-                    <p className="text-white/40 text-sm mb-7 leading-relaxed">{plan.desc}</p>
+      <div className="max-w-[960px] mx-auto border-t border-b border-white/10 flex flex-col md:flex-row bg-[#0A0D20]">
+        {plans.map((plan, i) => (
+          <div key={i} className={`flex-1 p-10 flex flex-col ${plan.dark ? 'bg-[#141a4e] text-white' : 'bg-[#0A0D20] text-slate-200'} ${i === 1 ? '' : (i === 0 ? 'border-r border-white/10' : 'border-l border-white/10')}`}>
+            <h3 className="text-[17px] font-medium mb-3 text-white">{plan.name}</h3>
+            <p className={`text-[14px] mb-8 leading-relaxed h-[42px] ${plan.dark ? 'text-indigo-200' : 'text-slate-400'}`}>{plan.desc}</p>
 
-                    <ul className="space-y-3 mb-8">
-                      {plan.features.map((f, j) => (
-                        <li key={j} className="flex items-center gap-2.5 text-sm text-white/65">
-                          <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${plan.highlight ? "bg-gradient-to-br from-[#3B82F6] to-[#8B5CF6]" : "bg-white/[0.08]"}`}>
-                            <Check className="w-3 h-3 text-white" strokeWidth={3} />
-                          </div>
-                          {f}
-                        </li>
-                      ))}
-                    </ul>
+            <div className="flex items-start gap-1 mb-2 mt-auto">
+              <span className="text-5xl font-serif tracking-tight text-white">{plan.price}</span>
+            </div>
+            <p className={`text-[13px] mb-8 ${plan.dark ? 'text-indigo-200' : 'text-slate-500'}`}>per year, per user.</p>
 
-                    <motion.a href="#" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-                      className={`flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm transition-all w-full ${plan.highlight
-                        ? "bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-white shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40"
-                        : "border border-white/[0.1] bg-white/[0.05] text-white/70 hover:bg-white/[0.1] hover:text-white"
-                      }`}>
-                      {plan.cta} <ArrowRight className="w-4 h-4" />
-                    </motion.a>
-                  </GlassCard>
-                </div>
-              </motion.div>
-            ))}
+            <button className={`w-full py-3.5 rounded-full font-medium text-[14px] transition-colors mb-10 ${plan.dark ? 'bg-[#38BDF8] text-[#060918] hover:bg-[#7dd3fc] shadow-lg shadow-[#38BDF8]/20' : 'bg-white/10 text-white hover:bg-white/20 shadow-sm border border-white/10'}`}>
+              {plan.cta}
+            </button>
+
+            <ul className="space-y-3.5">
+              {plan.features.map((f, j) => (
+                <li key={j} className="flex items-center gap-3 text-[13px]">
+                  <Check className={`w-3.5 h-3.5 flex-shrink-0 ${plan.dark ? 'text-[#38BDF8]' : 'text-slate-500'}`} strokeWidth={2.5} />
+                  <span className={plan.dark ? 'text-white/90' : 'text-slate-400'}>{f}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-        </motion.div>
+        ))}
       </div>
     </section>
   );
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   FOOTER
+   BOTTOM CTA & FOOTER
 ═══════════════════════════════════════════════════════════════════ */
-function Footer() {
-  const cols = [
-    { title: "Product", links: ["Features", "Marketplace", "Pricing", "Changelog"] },
-    { title: "Community", links: ["Discord", "Twitter", "GitHub", "Blog"] },
-    { title: "Company", links: ["About", "Privacy", "Terms", "Contact"] },
-  ];
-
+function BottomCTA() {
   return (
-    <footer className="relative border-t border-white/[0.06] py-16 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
+    <section className="py-32 border-t border-white/5 relative overflow-hidden bg-[#0A0D20]">
+      <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 1px, transparent 12px)" }} />
+      <div className="relative z-10 max-w-2xl mx-auto text-center px-5">
+        <h2 className="text-4xl md:text-5xl font-serif text-white mb-6 tracking-tight">Ready to transform your <br /> workflow?</h2>
+        <p className="text-slate-400 text-[17px] mb-10 leading-relaxed max-w-lg mx-auto">Join thousands of users streamlining their browsing, managing distractions, and growing with data-driven insights.</p>
+        <a href="https://github.com/EpicCoder16/Patches" target="_blank">
+          <button className="bg-[#141a4e] text-white border border-indigo-500/30 px-8 py-3.5 rounded-full font-medium text-[15px] hover:bg-[#1a2366] transition-colors shadow-lg">
+            Start for free
+          </button>
+        </a>
+      </div>
+    </section>
+  );
+}
 
-      <div className="relative z-10 max-w-6xl mx-auto px-5">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14">
-          {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#3B82F6] to-[#8B5CF6] flex items-center justify-center">
-                <Puzzle className="w-4 h-4 text-white" strokeWidth={2.5} />
-              </div>
-              <span className="font-semibold text-white text-[17px] tracking-tight">Patches</span>
-            </div>
-            <p className="text-white/35 text-sm leading-relaxed mb-5">
-              Built for the future of browsing.
-            </p>
-            <div className="flex items-center gap-3">
-              {[
-  { path: "M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" },
-  { path: "M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z" },
-  { path: "M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.03.056a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z" }
-].map((icon, i) => (
-  <a key={i} href="#" className="w-8 h-8 rounded-lg border border-white/[0.08] bg-white/[0.04] flex items-center justify-center text-white/40 hover:text-white hover:bg-white/[0.1] transition-all">
-    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-      <path d={icon.path} />
-    </svg>
-  </a>
-))}
-            </div>
+function Footer() {
+  return (
+    <footer className="bg-[#060918] py-16 border-t border-white/5 px-5">
+      <div className="max-w-[1000px] mx-auto flex flex-col md:flex-row justify-between gap-12">
+        <div className="md:w-1/2">
+          <div className="flex items-center gap-2 mb-2">
+            <img src={logo} alt="Patches Logo" className="w-8 h-8 rounded-full shadow-sm bg-white/10" />
+            <h3 className="font-serif text-[20px] font-semibold text-white tracking-tight">Patches</h3>
           </div>
+          <p className="text-slate-400 text-[14px]">Browsing made effortless</p>
 
-          {cols.map((col) => (
-            <div key={col.title}>
-              <h4 className="text-white/60 font-semibold text-xs uppercase tracking-widest mb-4">{col.title}</h4>
-              <ul className="space-y-2.5">
-                {col.links.map((l) => (
-                  <li key={l}><a href="#" className="text-white/35 text-sm hover:text-white/70 transition-colors">{l}</a></li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div className="flex gap-4 mt-8 text-slate-500">
+            {/* GitHub icon */}
+            <a href="https://github.com/EpicCoder16/Patches" target="_blank" className="hover:text-white transition-colors">
+              <GithubIcon className="w-[18px] h-[18px]" />
+            </a>
+            {/* LinkedIn icon */}
+            <a href="https://www.linkedin.com/in/eshwar-bejugam-681a35320/" target="_blank" className="hover:text-white transition-colors">
+              <LinkedInIcon className="w-[18px] h-[18px]" />
+            </a>
+          </div>
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-white/[0.05]">
-          <p className="text-white/20 text-xs">© 2025 Patches. All rights reserved.</p>
-          <p className="text-white/20 text-xs flex items-center gap-1.5">
-            Built for the future of browsing <Sparkles className="w-3 h-3 text-blue-400/60" />
-          </p>
+        <div className="flex-1 flex justify-end gap-16">
+          <div>
+            <h4 className="font-semibold text-slate-300 mb-5 text-[14px]">Product</h4>
+            <ul className="space-y-4 text-[14px] text-slate-500">
+              <li><a href="" className="hover:text-white transition-colors">Features</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-semibold text-slate-300 mb-5 text-[14px]">Company</h4>
+            <ul className="space-y-4 text-[14px] text-slate-500">
+              <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+            </ul>
+          </div>
         </div>
       </div>
     </footer>
@@ -589,24 +428,41 @@ function Footer() {
 ═══════════════════════════════════════════════════════════════════ */
 export default function App() {
   return (
-    <div className="min-h-screen bg-[#050505] font-sans antialiased overflow-x-hidden">
-      {/* Custom scrollbar & font */}
+    <div className="min-h-screen bg-[#060918] font-sans antialiased overflow-x-hidden selection:bg-[#38BDF8] selection:text-[#060918]">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
-        * { font-family: 'Plus Jakarta Sans', sans-serif; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #050505; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+        
+        :root {
+          --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          --font-serif: 'Playfair Display', Georgia, serif;
+        }
+
+        body {
+          font-family: var(--font-sans);
+          color: #f8fafc;
+        }
+
+        h1, h2, .font-serif {
+          font-family: var(--font-serif);
+        }
+
+        .font-sans {
+          font-family: var(--font-sans);
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #060918; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
         html { scroll-behavior: smooth; }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
       `}</style>
 
       <Navbar />
       <Hero />
       <DemoVideo />
       <FeatureGrid />
-      <MarketplacePreview />
       <Pricing />
+      <BottomCTA />
       <Footer />
     </div>
   );
