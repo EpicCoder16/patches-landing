@@ -107,13 +107,13 @@ function Hero() {
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="https://github.com/EpicCoder16/Patches" target="_blank">
+            <a href="https://github.com/EpicCoder16/Patches/releases/download/v0.7.0-beta/Patches-1.0.0-arm64.dmg" target="_blank">
               <button className="flex items-center justify-center gap-2 bg-[#38BDF8] text-[#060918] px-7 py-3.5 rounded-full font-bold text-[15px] hover:bg-[#7dd3fc] transition-colors shadow-lg shadow-[#38BDF8]/20 w-full sm:w-auto">
                 <Apple className="w-[18px] h-[18px] mb-[2px]" />
                 Download for Mac
               </button>
             </a>
-            <a href="https://github.com/EpicCoder16/Patches" target="_blank">
+            <a href="https://github.com/EpicCoder16/Patches/releases/download/v0.7.0-beta/Patches.Setup.1.0.0.exe" target="_blank">
               <button className="flex items-center justify-center gap-2 bg-white/10 text-white border border-white/20 px-7 py-3.5 rounded-full font-medium text-[15px] hover:bg-white/20 transition-colors shadow-sm w-full sm:w-auto backdrop-blur-sm">
                 <WindowsIcon className="w-[16px] h-[16px]" />
                 Download for Windows
@@ -370,11 +370,9 @@ function BottomCTA() {
       <div className="relative z-10 max-w-2xl mx-auto text-center px-5">
         <h2 className="text-4xl md:text-5xl font-serif text-white mb-6 tracking-tight">Ready to transform your <br /> workflow?</h2>
         <p className="text-slate-400 text-[17px] mb-10 leading-relaxed max-w-lg mx-auto">Join thousands of users streamlining their browsing, managing distractions, and growing with data-driven insights.</p>
-        <a href="https://github.com/EpicCoder16/Patches" target="_blank">
-          <button className="bg-[#141a4e] text-white border border-indigo-500/30 px-8 py-3.5 rounded-full font-medium text-[15px] hover:bg-[#1a2366] transition-colors shadow-lg">
-            Start for free
-          </button>
-        </a>
+        <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="bg-[#141a4e] text-white border border-indigo-500/30 px-8 py-3.5 rounded-full font-medium text-[15px] hover:bg-[#1a2366] transition-colors shadow-lg">
+          Start for free
+        </button>
       </div>
     </section>
   );
@@ -393,7 +391,7 @@ function Footer() {
 
           <div className="flex gap-4 mt-8 text-slate-500">
             {/* GitHub icon */}
-            <a href="https://github.com/EpicCoder16/Patches" target="_blank" className="hover:text-white transition-colors">
+            <a href="https://github.com/EpicCoder16" target="_blank" className="hover:text-white transition-colors">
               <GithubIcon className="w-[18px] h-[18px]" />
             </a>
             {/* LinkedIn icon */}
