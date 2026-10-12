@@ -107,13 +107,13 @@ function Hero() {
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="https://github.com/EpicCoder16/Patches/releases/download/v0.7.0-beta/Patches-1.0.0-arm64.dmg" target="_blank">
+            <a href="https://github.com/EpicCoder16/Patches/releases/download/v0.8.0-beta/Patches-1.0.0-arm64.dmg" target="_blank">
               <button className="flex items-center justify-center gap-2 bg-[#38BDF8] text-[#060918] px-7 py-3.5 rounded-full font-bold text-[15px] hover:bg-[#7dd3fc] transition-colors shadow-lg shadow-[#38BDF8]/20 w-full sm:w-auto">
                 <Apple className="w-[18px] h-[18px] mb-[2px]" />
                 Download for Mac
               </button>
             </a>
-            <a href="https://github.com/EpicCoder16/Patches/releases/download/v0.7.0-beta/Patches.Setup.1.0.0.exe" target="_blank">
+            <a href="https://github.com/EpicCoder16/Patches/releases/download/v0.8.0-beta/Patches.Setup.1.0.0.exe" target="_blank">
               <button className="flex items-center justify-center gap-2 bg-white/10 text-white border border-white/20 px-7 py-3.5 rounded-full font-medium text-[15px] hover:bg-white/20 transition-colors shadow-sm w-full sm:w-auto backdrop-blur-sm">
                 <WindowsIcon className="w-[16px] h-[16px]" />
                 Download for Windows
